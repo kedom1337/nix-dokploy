@@ -331,7 +331,6 @@ in {
                 echo "Creating and starting Traefik container..."
                 docker run -d \
                   --name dokploy-traefik \
-                  --network dokploy-network \
                   --restart=always \
                   -v /var/run/docker.sock:/var/run/docker.sock \
                   -v ${cfg.dataDir}/traefik/traefik.yml:/etc/traefik/traefik.yml \
@@ -342,6 +341,8 @@ in {
                   ${lib.concatStringsSep " \\\n" cfg.traefik.extraArgs} \
                   ${cfg.traefik.image}
               fi
+
+              docker network connect dokploy-network dokploy-traefik
             '';
           };
         in "${script}/bin/dokploy-traefik-start";
