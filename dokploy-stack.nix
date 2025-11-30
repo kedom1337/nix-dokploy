@@ -89,6 +89,43 @@
             })
         ];
       };
+
+    traefik = {
+      inherit (cfg.traefik) image;
+      deploy = {
+        placement.constraints = ["node.role == manager"];
+        restart_policy.condition = "any";
+      };
+      environment = cfg.traefik.environment;
+      command = cfg.traefik.command;
+      networks = {
+        dokploy-network = {};
+      };
+      volumes = [
+        "${cfg.dataDir}/traefik/traefik.yml:/etc/traefik/traefik.yml"
+        "${cfg.dataDir}/traefik/dynamic:/etc/dokploy/traefik/dynamic"
+        "/var/run/docker.sock:/var/run/docker.sock"
+      ] ++ cfg.traefik.volumes;
+      ports = [
+
+        {
+          target = 443;
+          published = 443;
+          mode = "host";
+        }
+        {
+          target = 80;
+          published = 80;
+          mode = "host";
+        }
+        {
+          target = 443;
+          published = 443;
+          protocol = "udp";
+          mode = "host";
+        }
+      ];
+    };
   };
 
   networks = {
