@@ -96,18 +96,19 @@
         placement.constraints = ["node.role == manager"];
         restart_policy.condition = "any";
       };
-      environment = cfg.traefik.environment;
-      command = cfg.traefik.command;
       networks = {
-        dokploy-network = {};
+        networks = {
+          dokploy-network = {
+            aliases = ["dokploy-traefik"];
+          };
+        };
       };
       volumes = [
         "${cfg.dataDir}/traefik/traefik.yml:/etc/traefik/traefik.yml"
         "${cfg.dataDir}/traefik/dynamic:/etc/dokploy/traefik/dynamic"
         "/var/run/docker.sock:/var/run/docker.sock"
-      ] ++ cfg.traefik.volumes;
+      ];
       ports = [
-
         {
           target = 443;
           published = 443;
